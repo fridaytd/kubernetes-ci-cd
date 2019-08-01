@@ -93,4 +93,7 @@ module.exports = function(Crossword) {
     error.status = status | 500;
     return cb(error);
   }
+
+  function ab() {
+    }
 };
