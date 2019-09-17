@@ -1,25 +1,31 @@
-pipeline {
-    agent any
-    // options {
+podTemplate(
+    label: 'pod',
+    containers: [
+        containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.7.3', command: 'cat', ttyEnabled: true)
+    ],
+    volumes: [
+        hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
+    ]
+) {
+node('pod') {
+    
+    checkout scm
 
-    // }
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Build'
-                sh("docker version")
-            }
+    stage('Build image') {
+        container('docker') {
+            sh "docker version"
         }
-        stage('Test') {
-            steps {
-                echo 'Test'
-            }
+    }
+
+    stage('Push image to registry') {
+        container('docker') {
+
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploy'
-            }
-        }
+    }
+
+    stage('Deploy application') {
 
     }
+
 }
